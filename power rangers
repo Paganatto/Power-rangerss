@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Power Rangers do Nosso Grupo</title>
+<style>
+  /* Estilo geral do body */
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #111;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+
+  /* Título da página */
+  h1 {
+    margin-bottom: 40px;
+    color: #e50914; /* Vermelho forte */
+    text-shadow: 0 0 10px #e50914;
+  }
+
+  /* Container que segura todos os cards */
+  .container {
+    display: flex;       /* deixa os cards em linha */
+    flex-wrap: wrap;     /* permite quebrar linha se precisar */
+    justify-content: center; /* centraliza os cards */
+    gap: 30px;           /* espaço entre os cards */
+  }
+
+  /* Estilo base para cada card */
+  .ranger-card {
+    border-radius: 10px;        /* cantos arredondados */
+    width: 180px;               /* largura fixa */
+    padding: 15px;              /* espaçamento interno */
+    box-shadow: 0 0 15px rgba(255,255,255,0.1); /* sombra leve */
+    transition: transform 0.3s ease; /* animação ao passar o mouse */
+    position: relative;         /* para posicionar tooltip */
+    cursor: pointer;            /* cursor de mãozinha */
+    color: white;               /* texto branco (pode mudar em amarelo) */
+  }
+
+  /* Zoom do card ao passar o mouse */
+  .ranger-card:hover {
+    transform: scale(1.05);
+  }
+
+  .image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 125%; /* Altura fixa proporcional à largura (4:5) */
+  border-radius: 10px;
+  overflow: hidden;
+  border: 3px solid;
+}
+
+/* Imagens dentro do container */
+.image-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: opacity 0.5s ease;
+  display: block; /* evita espaçamento */
+}
+  
+
+  /* Imagem base do Power Ranger (visível inicialmente) */
+  .image-container img.base-img {
+    opacity: 1;
+  }
+
+  /* Imagem do grupo que aparece no hover (invisível inicialmente) */
+  .image-container img.hover-img {
+    opacity: 0;
+  }
+
+  /* Quando o mouse está sobre o container, inverte as opacidades */
+  .image-container:hover img.base-img {
+    opacity: 0;
+  }
+  .image-container:hover img.hover-img {
+    opacity: 1;
+  }
+
+  /* Nome do Ranger (pessoa do grupo) */
+  .ranger-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+
+  /* Cor do Ranger (texto da cor embaixo do nome) */
+  .ranger-color {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  /* Tooltip que mostra as características */
+  .tooltip {
+    position: absolute;
+    bottom: 100%;            /* fica acima do card */
+    left: 50%;               /* centralizado horizontalmente */
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.75);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    width: 220px;
+    font-size: 14px;
+    line-height: 1.3;
+    opacity: 0;              /* invisível inicialmente */
+    pointer-events: none;    /* não interage com mouse */
+    transition: opacity 0.3s ease;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    z-index: 10;
+  }
+
+  /* Tooltip aparece quando o mouse está no card */
+  .ranger-card:hover .tooltip {
+    opacity: 1;
+    pointer-events: auto;    /* agora pode interagir */
+  }
+
+  /* Triângulo abaixo da tooltip */
+  .tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;               /* na base da tooltip */
+    left: 50%;
+    margin-left: -7px;
+    border-width: 7px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.75) transparent transparent transparent;
+  }
+
+  /* ======= CORES DOS CARDS E BORDAS ======= */
+
+  /* Vermelho */
+  .red {
+    background-color: #e50914;
+    box-shadow: 0 0 20px #e50914aa;
+  }
+  .red .image-container {
+    border-color: #b0070f;
+  }
+  .red .ranger-color {
+    color: #b0070f;
+  }
+  .red .tooltip {
+    background-color: #b0070fdd;
+    box-shadow: 0 0 15px #b0070fdd;
+  }
+  .red .tooltip::after {
+    border-color: #b0070fdd transparent transparent transparent;
+  }
+
+  /* Azul */
+  .blue {
+    background-color: #0078d7;
+    box-shadow: 0 0 20px #0078d7aa;
+  }
+  .blue .image-container {
+    border-color: #005a9e;
+  }
+  .blue .ranger-color {
+    color: #005a9e;
+  }
+  .blue .tooltip {
+    background-color: #005a9edd;
+    box-shadow: 0 0 15px #005a9edd;
+  }
+  .blue .tooltip::after {
+    border-color: #005a9edd transparent transparent transparent;
+  }
+
+  /* Amarelo */
+  .yellow {
+    background-color: #f5d300;
+    box-shadow: 0 0 20px #f5d300aa;
+    color: #222; /* texto escuro para melhor contraste */
+  }
+  .yellow .image-container {
+    border-color: #bba300;
+  }
+  .yellow .ranger-color {
+    color: #bba300;
+  }
+  .yellow .tooltip {
+    background-color: #bba300dd;
+    box-shadow: 0 0 15px #bba300dd;
+    color: #222;
+  }
+  .yellow .tooltip::after {
+    border-color: #bba300dd transparent transparent transparent;
+  }
+
+  /* Rosa */
+  .pink {
+    background-color: #ff69b4;
+    box-shadow: 0 0 20px #ff69b4aa;
+  }
+  .pink .image-container {
+    border-color: #cc528b;
+  }
+  .pink .ranger-color {
+    color: #cc528b;
+  }
+  .pink .tooltip {
+    background-color: #cc528bdd;
+    box-shadow: 0 0 15px #cc528bdd;
+  }
+  .pink .tooltip::after {
+    border-color: #cc528bdd transparent transparent transparent;
+  }
+
+  /* Verde */
+  .green {
+    background-color: #009933;
+    box-shadow: 0 0 20px #009933aa;
+  }
+  .green .image-container {
+    border-color: #006622;
+  }
+  .green .ranger-color {
+    color: #006622;
+  }
+  .green .tooltip {
+    background-color: #006622dd;
+    box-shadow: 0 0 15px #006622dd;
+  }
+  .green .tooltip::after {
+    border-color: #006622dd transparent transparent transparent;
+  }
+
+  /* Preto */
+  .black {
+    background-color: #222;
+    box-shadow: 0 0 20px #444444aa;
+  }
+  .black .image-container {
+    border-color: #555;
+  }
+  .black .ranger-color {
+    color: #aaa;
+  }
+  .black .tooltip {
+    background-color: #444444dd;
+    box-shadow: 0 0 15px #444444dd;
+  }
+  .black .tooltip::after {
+    border-color: #444444dd transparent transparent transparent;
+  }
+</style>
+</head>
+<body>
+  <h1>Power Rangers contra o T.I!</h1>
+
+  <div class="container">
+
+    <!-- ======= CARD VERMELHO ======= -->
+    <div class="ranger-card red">
+      <div class="image-container">
+        <!-- Imagem do Power Ranger vermelho (aparece sempre) -->
+        <img
+          src="https://www.otempo.com.br/content/dam/otempo/editorias/entretenimento/filmes-e-series/2023/4/entretenimento-power-rangers-o-que-aconteceu-com-o-ranger-vermelho-original-1708781757.jpeg"
+          alt="Power Ranger Vermelho"
+          class="base-img"
+        />
+        <!-- Imagem da pessoa do grupo (aparece ao passar o mouse) -->
+        <img
+          src="https://media-gru2-2.cdn.whatsapp.net/v/t61.24694-24/491883486_754256910320158_8127190170238158802_n.jpg?ccb=11-4&oh=01_Q5Aa2gG5Ld2sfPNeiLo5gi9W68pCXFW_pa44axzuTTntyU9w2g&oe=68EA7F2F&_nc_sid=5e03e0&_nc_cat=110"
+          alt="Foto Nome 1"
+          class="hover-img"
+        />
+      </div>
+      <!-- Nome da pessoa -->
+      <div class="ranger-name">Lucas</div>
+      <!-- Cor do Ranger -->
+      <div class="ranger-color">Vermelho</div>
+      <!-- Características no tooltip -->
+      <div class="tooltip">
+        <strong>Características:</strong><br />
+        Engraçadinho, faz piada com tudo, zoa todos, entende a materia fácil, mas ta sempre pronto pra tomar uma
+      </div>
+    </div>
+
+    <!-- ======= CARD AZUL ======= -->
+    <div class="ranger-card blue">
+      <div class="image-container">
+        <!-- Imagem do Power Ranger azul -->
+        <img
+          src="https://i.pinimg.com/736x/0a/37/c0/0a37c072811e12a93e785c3a0aef820b.jpg"
+          alt="Power Ranger Azul"
+          class="base-img"
+        />
+        <!-- Foto da pessoa do grupo -->
+        <img
+          src="https://media-gru2-2.cdn.whatsapp.net/v/t61.24694-24/488968794_511657235349529_1835206438294955167_n.jpg?ccb=11-4&oh=01_Q5Aa2gF6bZ-5t4Sb8BHYlxtZBcmsHKKEXPQHARKb7vgj4DjfOQ&oe=68EA9ABB&_nc_sid=5e03e0&_nc_cat=103"
+          alt="Foto Nome 2"
+          class="hover-img"
+        />
+      </div>
+      <div class="ranger-name">Briel</div>
+      <div class="ranger-color">Azul</div>
+      <div class="tooltip">
+        <strong>Características:</strong><br />
+        Ri de tudo, amigo de todos, "as ideia" dele, amigao da turma, extrovertidao, paz pra geral.
+      </div>
+    </div>
+
+    <!-- ======= CARD AMARELO ======= -->
+    <div class="ranger-card yellow">
+      <div class="image-container">
+        <!-- Imagem do Power Ranger amarelo -->
+        <img
+          src="https://cdn.awsli.com.br/600x700/222/222813/produto/81836222/84af715426.jpg"
+          alt="Power Ranger Amarelo"
+          class="base-img"
+        />
+        <!-- Foto da pessoa do grupo -->
+        <img
+          src="https://media-gru2-2.cdn.whatsapp.net/v/t61.24694-24/557432029_3030790160435432_251546401596998915_n.jpg?ccb=11-4&oh=01_Q5Aa2gEOXO-JJA_aXgaGPq92_9ORVvQBpQk-v5wLGXcnk97Nog&oe=68EAA898&_nc_sid=5e03e0&_nc_cat=109"
+          alt="Foto Nome 3"
+          class="hover-img"
+        />
+      </div>
+      <div class="ranger-name">Kaiky</div>
+      <div class="ranger-color">Amarelo</div>
+      <div class="tooltip" style="color: #222;">
+        <strong>Características:</strong><br />
+        O rolezeiro dentre todos, famoso ratarao, gente boa, engraçado, mlk firmeza, paz p vida, usuario .<br />
+substancias ilicitas e de metanol. Gin de 10 é o especial
+      </div>
+    </div>
+
+    <!-- ======= CARD ROSA ======= -->
+    <div class="ranger-card pink">
+      <div class="image-container">
+        <!-- Imagem do Power Ranger rosa -->
+        <img
+          src="https://sm.ign.com/ign_br/news/e/era-divers/era-diverso-ate-demais-afirma-ranger-rosa-sobre-power-ranger_7cac.jpg"
+          alt="Power Ranger Rosa"
+          class="base-img"
+        />
+        <!-- Foto da pessoa do grupo -->
+        <img
+          src="https://media-gru2-2.cdn.whatsapp.net/v/t61.24694-24/554296148_1107957061536408_8765692498220061570_n.jpg?ccb=11-4&oh=01_Q5Aa2gH-s5S-6bp8FFWRn5dXk4Wws8YGFjCswXqMobS_ylqJow&oe=68EAA8C6&_nc_sid=5e03e0&_nc_cat=107"
+          alt="Foto Nome 4"
+          class="hover-img"
+        />
+      </div>
+      <div class="ranger-name">Chico Moedas</div>
+      <div class="ranger-color">Rosa</div>
+      <div class="tooltip">
+        <strong>Características:</strong><br />
+        Nosso Deus, nosso alicerce, nosso famoso chico moedas.
+        Tem TDAH, é o membro mais especial do grupo, Desligadao, ta nem ai pra aula, mas entende tudo (diz ele)
+      
+      </div>
+    </div>
+
+    <!-- ======= CARD VERDE ======= -->
+    <div class="ranger-card green">
+      <div class="image-container">
+        <!-- Imagem do Power Ranger verde -->
+        <img
+          src="https://http2.mlstatic.com/D_Q_NP_876835-MLU74248336643_012024-O.webp"
+          alt="Power Ranger Verde"
+          class="base-img"
+        />
+        <!-- Foto da pessoa do grupo -->
+        <img
+          src="https://super.abril.com.br/wp-content/uploads/2019/10/si_saturno.png?crop=1&resize=1212,909"
+          alt="Foto Nome 5"
+          class="hover-img"
+        />
+      </div>
+      <div class="ranger-name">Ivomar</div>
+      <div class="ranger-color">Verde</div>
+      <div class="tooltip">
+        <strong>Características:</strong><br />
+        O nosso usuario de drogas e devorador de novinhas.<br />
+        Dose de 10 na mente vira pau pra toda obra (ou mulheres).
+      </div>
+    </div>
+
+    <!-- ======= CARD PRETO ======= -->
+    <div class="ranger-card black">
+      <div class="image-container">
+        <!-- Imagem do Power Ranger preto -->
+        <img
+          src="https://static.wikia.nocookie.net/downrangers/images/7/75/Downrangers_black.png/revision/latest?cb=20170706231447&path-prefix=pt"
+          alt="Power Ranger Preto"
+          class="base-img"
+        />
+        <!-- Foto da pessoa do grupo -->
+        <img
+          src="https://media-gru2-2.cdn.whatsapp.net/v/t61.24694-24/514590955_613244874673793_3351637827562763954_n.jpg?ccb=11-4&oh=01_Q5Aa2gHpgTn5-J5sQGY03KXJldOZKxwXhMF4bZk0ELH7Aj6ZNQ&oe=68EAACE0&_nc_sid=5e03e0&_nc_cat=111"
+          alt="Foto Nome 6"
+          class="hover-img"
+        />
+      </div>
+      <div class="ranger-name">Abner</div>
+      <div class="ranger-color">Preto</div>
+      <div class="tooltip">
+      O lider do grupo, sem ele não seriamos nada.<br />
+        Inteligente, proativo, paz c todo mundo, ri das piadas, adotou todos os outros rangers.
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
